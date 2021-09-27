@@ -5,6 +5,7 @@ from pandas.core import groupby
 import matplotlib.pyplot as plt
 import numpy as np
 from pandas.io.pytables import GenericDataIndexableCol
+import matplotlib
 
 
 class DataType(Enum):
@@ -94,7 +95,27 @@ class DataAnalysis:
 
         grouped_values = self.dataset.groupby(["Year"]).sum().iloc[:, -3:-1]
         print("Number of Scheduled and Chartered Flights per Year: \n")
-        print(grouped_values)
+
+        labels = list(grouped_values.index)
+
+        x = np.arange(len(labels))
+        width = 0.35
+
+        fig, ax = plt.subplots(figsize=(10, 10))
+        rects1 = ax.bar(
+            x - width/2, grouped_values["Scheduled"], width, label='Scheduled Flights')
+        rects2 = ax.bar(
+            x + width/2, grouped_values["Charter"], width, label='Chartered Flights')
+
+        ax.set_ylabel('Number of Flights')
+        ax.set_title('Scheduled and Chartered Flights per Year (1990 - 2020)')
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels, rotation=60)
+        ax.get_yaxis().set_major_formatter(
+            matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
+        ax.legend()
+
+        plt.show()
 
 
 if __name__ == "__main__":
